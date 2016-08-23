@@ -1,5 +1,3 @@
-/*jshint node:true*/
-'use strict';
 var fs = require('fs');
 var path = require('path');
 var reporter = require('./reporter.js');
@@ -269,7 +267,7 @@ function HTMLScreenshotReporter(options) {
 	}
 
 	function linkToScreenshot(scenarioName, browserName){
-		return '<a href="' + path.join(options.screenshotsFolder, runId(scenarioName, browserName), '.png') +'">';
+		return '<a href="' + options.screenshotsFolder + '/' + runId(scenarioName, browserName) + '.png">';
 	}
 
 	function runId(scenarioName, browserName){

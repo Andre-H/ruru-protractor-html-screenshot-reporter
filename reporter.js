@@ -1,6 +1,3 @@
-/*jshint node:true*/
-'use strict';
-
 function getUniqueBrowserNames(jsonstr){
     var browserArray = new Array();
     for (var j = 0; j < jsonstr.length; j++) {
