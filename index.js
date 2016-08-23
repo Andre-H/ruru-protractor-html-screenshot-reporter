@@ -267,7 +267,7 @@ function HTMLScreenshotReporter(options) {
 	}
 
 	function linkToScreenshot(scenarioName, browserName){
-		return '<a href="' + path.join(options.screenshotsFolder, runId(scenarioName, browserName), '.png') +'">';
+		return '<a href="' + options.screenshotsFolder + '/' + runId(scenarioName, browserName) + '.png">';
 	}
 
 	function runId(scenarioName, browserName){
