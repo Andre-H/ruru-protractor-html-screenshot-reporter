@@ -35,7 +35,7 @@ function HTMLScreenshotReporter(options) {
 
 	self.specDone = function (spec) {
 		browser.takeScreenshot().then(function (png) {
-			writeScreenShot(png, path.join(options.screenshotsFolder, sanitizeFilename(spec.description), '.png'));
+			writeScreenShot(png, path.join(options.screenshotsFolder, sanitizeFilename(spec.description)) + '.png');
 		});
 	};
 
@@ -271,8 +271,6 @@ function HTMLScreenshotReporter(options) {
 	}
 
 	function runId(scenarioName, browserName){
-		console.log(scenarioName);
-		console.log(browserName);
 		return sanitizeFilename(scenarioName) + sanitizeFilename(browserName);
 	}
 
