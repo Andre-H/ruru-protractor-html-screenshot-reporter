@@ -3,7 +3,9 @@ Protractor test results in HTML format with screen captures.
 
 Will work with multi-capabilities and spec file sharding.
 
-##BETA - Needs more tests, more use in different configurations.
+##BETA BETA BETA BETA
+
+Needs more tests, more use in different configurations.
 
 Build status: [![Run Status](https://api.shippable.com/projects/57bbb6deebc40a0e0045c977/badge?branch=master)](https://app.shippable.com/projects/57bbb6deebc40a0e0045c977)
 
