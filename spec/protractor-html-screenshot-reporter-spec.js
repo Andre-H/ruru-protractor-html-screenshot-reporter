@@ -10,7 +10,8 @@ describe('Generate HTML Report', function () {
     it('should create HTML from JSON', function (done) {
         var htmlReporter = new ProtractorHTMLReporter({
             title : 'My Protractor End to End Test Results',
-            htmlReportDestPath : 'target/protractor-e2e-report-basic.html'
+            targetPath : 'target',
+            fileName : 'protractor-e2e-report-basic.html'
         });
         htmlReporter.generateHtmlReport('./resources/protractor-e2e-report-basic.json');
         expect(fs.readFileSync('target/protractor-e2e-report-basic.html')).toEqualFileContents('protractor-e2e-report-basic', done);
