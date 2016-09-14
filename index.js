@@ -7,15 +7,15 @@ var hasOwnProperty = Object.prototype.hasOwnProperty;
 const __featureDenominator = 'Feature: ';
 const __scenarioDenominator = ' - Scenario: ';
 
-
 function HTMLScreenshotReporter(options) {
 
 	var self = this;
 	self.tsStart = new Date();
 
-	options.screenshotsFolder = options.screenshotsFolder || 'target/screenshots';
 	options.title = options.title || 'Protractor End to End Test Report';
-	options.htmlReportDestPath = options.htmlReportDestPath || 'target/protractor-e2e-report.html';
+	options.screenshotsFolder = options.screenshotsFolder || 'screenshots';
+	options.fileName = options.fileName || 'protractor-e2e-report.html';
+	options.targetPath = options.targetPath || 'target';
 
 	self.jasmineStarted = function (summary) {};
 
@@ -35,7 +35,7 @@ function HTMLScreenshotReporter(options) {
 
 	self.specDone = function (spec) {
 		browser.takeScreenshot().then(function (png) {
-			writeScreenShot(png, path.join(options.screenshotsFolder, sanitizeFilename(spec.description)) + '.png');
+			writeScreenShot(png, path.join(options.targetPath, options.screenshotsFolder, sanitizeFilename(spec.description)) + '.png');
 		});
 	};
 
@@ -46,7 +46,7 @@ function HTMLScreenshotReporter(options) {
 	self.generateHtmlReport = function (inputFile) {
 		var jsonResult = require(path.resolve(inputFile));
 		var result = generateReport(jsonResult, options.title, elapsedTime(self.tsStart, Date.now()));
-		fs.writeFileSync(path.resolve(options.htmlReportDestPath), result);
+		fs.writeFileSync(path.resolve(options.targetPath, options.fileName), result);
 	};
 
 	var writeScreenShot = function (data, filePath) {
