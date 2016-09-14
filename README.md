@@ -19,12 +19,13 @@ Place the following in your Protractor configuration file
 ```javascript
 var HTMLScreenshotReporter = require('ruru-protractor-html-screenshot-reporter');
 ```
-Create an instance of the reporter passing configuration parameters
+Create an instance of the reporter passing (optional) configuration parameters
 ```javascript
 var htmlReporter = new HTMLScreenshotReporter({
-	screenshotsFolder : 'screenshots-folder/',
 	title : 'My Protractor End to End Test Report',
-	htmlReportDestPath : 'targetdir/protractor-e2e-report.html'
+	targetPath : 'target',
+	screenshotsFolder : 'screenshots-folder',
+	fileName : 'protractor-e2e-report.html'
 });
 ```
 Place the following in your Protractor configuration file
@@ -54,7 +55,7 @@ exports.config = {
 		});
 	},
 	
-	//Place an afterLauch function similar to:
+	//Place an afterLaunch function similar to:
 	afterLaunch : function (exitCode) {
 		return new Promise(function (resolve) {
 			htmlReporter.generateHtmlReport(exports.config.resultJsonOutputFile);
