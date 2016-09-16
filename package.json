@@ -1,6 +1,6 @@
 {
   "name": "ruru-protractor-html-screenshot-reporter",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Protractor test results in HTML format with screen captures.",
   "main": "index.js",
   "scripts": {
