@@ -24,13 +24,14 @@ function HTMLScreenshotReporter(options) {
 	self.specStarted = function (spec) {
 		var featureName = spec.fullName.replace(spec.description, '');
 		spec.description = __featureDenominator + featureName + __scenarioDenominator + spec.description;
+		browser.currentTest = spec.description;
 		if(browser.browserName){
 			spec.description += '|' + browser.browserName;
+			browser.currentTest += '|' + browser.browserName;
 			if(browser.browserVersion){
 				spec.description +=  '-' + browser.version;
 			}
 		}
-		browser.currentTest = spec.description;
 	};
 
 	self.specDone = function (spec) {
