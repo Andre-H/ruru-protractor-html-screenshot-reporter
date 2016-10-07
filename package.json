@@ -4,8 +4,9 @@
   "description": "Protractor test results in HTML format with screen captures.",
   "main": "index.js",
   "scripts": {
-    "test": "npm run clean && istanbul cover --include-all-sources node_modules/jasmine/bin/jasmine.js",
-    "clean": "rimraf target/*"
+    "test": "npm run clean && npm run copy && istanbul cover --include-all-sources node_modules/jasmine/bin/jasmine.js",
+    "clean": "rimraf target/*",
+    "copy": "cpx \"./resources/*.tmp\" target"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/Andre-H/ruru-protractor-html-screenshot-reporter#readme",
   "devDependencies": {
+    "cpx": "^1.5.0",
     "fs": "0.0.2",
     "istanbul": "^0.4.4",
     "jasmine": "^2.4.1",

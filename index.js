@@ -91,6 +91,7 @@ function HTMLScreenshotReporter(options) {
 		result += concatReportHeaderSection(automationHeader);
 		result += concatRunInfoSection(elapsedTime);
 		result += concatReportSummary(allResults);
+		result += concatKnownIssues();
 		result += concatSpecResults(testArray, browserArrayUnique);
 		result += '</body>';
 		result += '</html>';
@@ -352,8 +353,16 @@ function HTMLScreenshotReporter(options) {
 		result +='	font-size: 10px;';
 		result +='	color: #999999;';
 		result +='}';
-		result +='table.runInfo td:first-child {';
-		result +='	padding-right: 25px;';
+		result +='table.runInfo td {';
+		result +='	padding-right: 6px;';
+		result +='	text-align: left';
+		result +='}';
+		result +='table.runInfo th {';
+		result +='	padding-right: 6px;';
+		result +='	text-align: left';
+		result +='}';
+		result +='table.runInfo img {';
+		result +='	vertical-align:text-bottom;';
 		result +='}';
 		result +='table.summary {';
 		result +='	font-size: 9px;';
@@ -489,6 +498,34 @@ function HTMLScreenshotReporter(options) {
 		result += pass + '</td><td>';
 		result += fail + '</td><td>';
 		result += calculatePassPercentage(pass, fail) + '</td></tr></table>';
+		return result;
+	}
+
+	function concatKnownIssues(){
+		var result = '';
+		var tempFiles = fs.readdirSync(path.resolve(options.targetPath));
+		var filterFn = function (fname){
+			return fname.match('.*\.tmp$');
+		};
+		tempFiles = tempFiles.filter(filterFn);
+		if(tempFiles.length) {
+			result += '<div class="header">Known Issues</div>';
+			result += '<table class="runInfo' +
+				' knownIssues"><tr><th>Type</th><th>Severity</th><th>Key</th><th>Description</th></tr>';
+		}
+		for(var i=0; i<tempFiles.length; i++){
+			var bugPath = path.join(path.resolve(options.targetPath), tempFiles[i]);
+			var raw = fs.readFileSync(bugPath)
+			var bug = JSON.parse(raw);
+			var key = bug.key;
+			var type = '<img src="'+bug.fields.issuetype.iconUrl+'" title="'+bug.fields.issuetype.description+'">';
+			var description = bug.fields.summary;
+			var severity = '<img src="'+bug.fields.priority.iconUrl+'" title="'+bug.fields.priority.name+'">';
+			result += '<tr><td>'+type+'</td><td>'+severity+'</td><td>'+key+'</td><td>'+description+'</td></tr>';
+		}
+		if(tempFiles.length) {
+			result += '</table>';
+		}
 		return result;
 	}
 
