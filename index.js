@@ -32,6 +32,7 @@ function HTMLScreenshotReporter(options) {
 				spec.description +=  '-' + browser.version;
 			}
 		}
+		spec.fullName = spec.description;
 	};
 
 	self.specDone = function (spec) {
