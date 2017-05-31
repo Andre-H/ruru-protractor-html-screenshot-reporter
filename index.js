@@ -239,7 +239,11 @@ function HTMLScreenshotReporter(options) {
 				for (var i = 1; i < run.stackTrace.length; i++) {
 					result += '<tr><td'
 					if(run.stackTrace[i].indexOf('    at ') == 0){
-						result += ' class="at"';
+						if(run.stackTrace[i].indexOf('node_modules') == -1 && run.stackTrace[i].indexOf('process._tickCallback') == -1){
+							result += ' class="atstrong"';
+						}else {
+							result += ' class="at"';
+						}
 					}
 					result += '>' + reporter.encodeEntities(run.stackTrace[i]) + '</td></tr>'
 				}
@@ -449,7 +453,7 @@ function HTMLScreenshotReporter(options) {
 		result +='	text-align: left;';
 		result +='	padding: 3px;';
 		result +='	padding-left:43px;';
-		result +='	color: #666666;';
+		result +='	color: #888888;';
 		result +='	border-style: none;';
 		result +='}';
 		result +='table.stacker td.error {';
@@ -461,6 +465,11 @@ function HTMLScreenshotReporter(options) {
 		result +='}';
 		result +='table.stacker td.at {';
 		result +='	padding-left:63px;';
+		result +='	color: #888888;';
+		result +='}';
+		result +='table.stacker td.atstrong {';
+		result +='	padding-left:63px;';
+		result +='	color: #333333;';
 		result +='}';
 		result +='table.stacker tr:nth-child(odd) {';
 		result +='	background-color: #F8F8F8;';

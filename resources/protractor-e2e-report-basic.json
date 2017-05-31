@@ -7,5 +7,17 @@
       }
     ],
     "duration": 4369
+  },
+  {
+    "description": "Feature: A failed feature here  - Scenario: should behave in a certain way|chrome",
+    "assertions": [
+      {
+        "passed": false,
+        "errorMsg": "Expected 'Something' to match 'Another Thing'.",
+        "stackTrace": "Error: Failed expectation\n    at C:\\Users\\tester\\project\\spec.js:47:49\n    at wrappedCtr.invokeCallback_ (C:/Users/tester/project/node_modules/grunt-protractor-runner/node_modules/protractor/node_modules/selenium-webdriver/lib/goog/../webdriver/promise.js:1337:14)\n    at wrappedCtr.execute_ (C:/Users/tester/project/node_modules/grunt-protractor-runner/node_modules/protractor/node_modules/selenium-webdriver/lib/goog/../webdriver/promise.js:2776:14)\n    at wrappedCtr.executeNext_ (C:/Users/tester/project/node_modules/grunt-protractor-runner/node_modules/protractor/node_modules/selenium-webdriver/lib/goog/../webdriver/promise.js:2758:21)\n    at goog.async.run.processWorkQueue (C:\\Users\\tester\\project\\node_modules\\grunt-protractor-runner\\node_modules\\protractor\\node_modules\\selenium-webdriver\\lib\\goog\\async\\run.js:124:15)\n    at process._tickCallback (internal/process/next_tick.js:109:7)"
+
+      }
+    ],
+    "duration": 1325
   }
 ]
