@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var mkdirp = require('mkdirp');
 var reporter = require('./reporter.js');
 
 const __featureDenominator = 'Feature: ';
@@ -15,16 +16,8 @@ function HTMLScreenshotReporter(options) {
 	options.fileName = options.fileName || 'protractor-e2e-report.html';
 	options.targetPath = options.targetPath || 'target';
 	options.takeScreenShotsForPassedSpecs = options.takeScreenShotsForPassedSpecs === undefined? true : options.takeScreenShotsForPassedSpecs;
-  function ensureDirectoryExistence(filePath) {
-    var dirname = path.dirname(filePath);
-    if (fs.existsSync(dirname)) {
-      return true;
-    }
-    ensureDirectoryExistence(dirname);
-    fs.mkdirSync(dirname);
-  }
-  ensureDirectoryExistence(options.targetPath);
-  ensureDirectoryExistence(options.screenshotsFolder);
+  mkdirp.sync(options.targetPath);
+  mkdirp.sync(options.screenshotsFolder);
 	self.jasmineStarted = function (summary) {};
 
 	self.suiteStarted = function (suite) {};
