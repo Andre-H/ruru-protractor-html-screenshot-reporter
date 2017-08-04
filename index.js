@@ -14,7 +14,7 @@ function HTMLScreenshotReporter(options) {
 	options.screenshotsFolder = options.screenshotsFolder || 'screenshots';
 	options.fileName = options.fileName || 'protractor-e2e-report.html';
 	options.targetPath = options.targetPath || 'target';
-	options.takeScreenShotsForPassedSpecs = options.takeScreenShotsForPassedSpecs || true;
+	options.takeScreenShotsForPassedSpecs = options.takeScreenShotsForPassedSpecs === undefined? true : options.takeScreenShotsForPassedSpecs;
 
 	self.jasmineStarted = function (summary) {};
 
