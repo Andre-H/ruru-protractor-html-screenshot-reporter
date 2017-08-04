@@ -174,16 +174,14 @@ function HTMLScreenshotReporter(options) {
 							timeTrack[browserName][f] += r.duration;
 
 							if (r.status === "true") {
-								result += '<td class="pass">' + linkToScreenshot(scen, browserName) + 'PASS</a>' +
+								result += '<td class="pass">' + linkToScreenshot(scen, browserName, !options.takeScreenShotsForPassedSpecs) + 'PASS</a>' +
 									' <span class="miliss">'+(r.duration/1000).toFixed(2)+'s.</span></td>';
-							}
-							if (r.status === "false") {
+							} else if (r.status === "false") {
 								result += '<td class="fail">FAIL - <a href="javascript:void(0)" onclick="showhide(\''+sanitizeFilename(scen) +'\', \'' +
 									sanitizeFilename(browserName)+'\')">stack trace</a> - ' + linkToScreenshot(scen, browserName) +
 									'screen shot</a> <span class="miliss">'+(r.duration/1000).toFixed(2)+'s.</span></td>';
 								exceptions.push(concatStackTrace(runId(scen, browserName), r, browsers.length + 2));
-							}
-							if (r.status === "Skipped") {
+							} else if (r.status === "Skipped") {
 								result += '<td class="skip">Skipped (test duration '+r.duration+' ms.)</td>';
 							}
 						}
@@ -295,8 +293,8 @@ function HTMLScreenshotReporter(options) {
 		return result;
 	}
 
-	function linkToScreenshot(scenarioName, browserName){
-		return '<a href="' + options.screenshotsFolder + '/' + runId(scenarioName, browserName) + '.png">';
+	function linkToScreenshot(scenarioName, browserName, disable){
+		return '<a ' + (disable ? 'disabled ' : '') + ' href="'+ options.screenshotsFolder + '/' + runId(scenarioName, browserName) + '.png">';
 	}
 
 	function runId(scenarioName, browserName){
@@ -499,6 +497,9 @@ function HTMLScreenshotReporter(options) {
 		result +='.miliss {';
 		result +='	color: #9B9B9B;';
 		result +='}';
+		result +='a[disabled] {';
+    result +='  pointer-events: none;';
+    result +='}';
 		result += '</style>';
 		return result;
 	}
