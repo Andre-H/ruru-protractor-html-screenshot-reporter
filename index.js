@@ -27,7 +27,7 @@ function HTMLScreenshotReporter(options) {
 		if(browser.browserName){
 			spec.description += '|' + browser.browserName;
 			browser.currentTest += '|' + browser.browserName;
-			if(browser.browserVersion){
+			if(browser.version){
 				spec.description +=  '-' + browser.version;
 			}
 		}
