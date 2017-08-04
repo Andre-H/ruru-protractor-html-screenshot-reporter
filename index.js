@@ -15,7 +15,16 @@ function HTMLScreenshotReporter(options) {
 	options.fileName = options.fileName || 'protractor-e2e-report.html';
 	options.targetPath = options.targetPath || 'target';
 	options.takeScreenShotsForPassedSpecs = options.takeScreenShotsForPassedSpecs === undefined? true : options.takeScreenShotsForPassedSpecs;
-
+  function ensureDirectoryExistence(filePath) {
+    var dirname = path.dirname(filePath);
+    if (fs.existsSync(dirname)) {
+      return true;
+    }
+    ensureDirectoryExistence(dirname);
+    fs.mkdirSync(dirname);
+  }
+  ensureDirectoryExistence(options.targetPath);
+  ensureDirectoryExistence(options.screenshotsFolder);
 	self.jasmineStarted = function (summary) {};
 
 	self.suiteStarted = function (suite) {};
