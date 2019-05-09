@@ -7,9 +7,9 @@ Will work with multi-capabilities and spec file sharding.
 
 Needs more tests, more use in different configurations.
 
-Build status: [![Run Status](https://api.shippable.com/projects/57bbb6deebc40a0e0045c977/badge?branch=master)](https://app.shippable.com/projects/57bbb6deebc40a0e0045c977)
+Build status: [![Run Status](https://api.shippable.com/projects/5c241f5787b5930700be968d/badge?branch=master)](https://api.shippable.com/projects/5c241f5787b5930700be968d/badge?branch=master)
 
-Test coverage: [![Coverage Badge](https://api.shippable.com/projects/57bbb6deebc40a0e0045c977/coverageBadge?branch=master)](https://app.shippable.com/projects/57bbb6deebc40a0e0045c977)
+Test coverage: [![Coverage Badge](https://api.shippable.com/projects/5c241f5787b5930700be968d/coverageBadge?branch=master)](https://api.shippable.com/projects/5c241f5787b5930700be968d/coverageBadge?branch=master)
 
 ## Installation
 `npm install ruru-protractor-html-screenshot-reporter`
