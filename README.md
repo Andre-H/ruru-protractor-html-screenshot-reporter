@@ -50,7 +50,6 @@ exports.config = {
 			return browser.getCapabilities().then(function (cap) {
 				browser.version = cap.get('version');
 				browser.browserName = cap.get('browserName');
-				browser.baseUrl  = config.baseUrl;
 			});
 		});
 	},
