@@ -25,7 +25,8 @@ var htmlReporter = new HTMLScreenshotReporter({
 	title : 'My Protractor End to End Test Report',
 	targetPath : 'target',
 	screenshotsFolder : 'screenshots-folder',
-	fileName : 'protractor-e2e-report.html'
+	fileName : 'protractor-e2e-report.html',
+	takeScreenShotsForPassedSpecs: true
 });
 ```
 Place the following in your Protractor configuration file

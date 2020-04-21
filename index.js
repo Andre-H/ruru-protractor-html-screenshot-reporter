@@ -1,8 +1,7 @@
 var fs = require('fs');
 var path = require('path');
+var mkdirp = require('mkdirp');
 var reporter = require('./reporter.js');
-
-var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 const __featureDenominator = 'Feature: ';
 const __scenarioDenominator = ' - Scenario: ';
@@ -16,7 +15,8 @@ function HTMLScreenshotReporter(options) {
 	options.screenshotsFolder = options.screenshotsFolder || 'screenshots';
 	options.fileName = options.fileName || 'protractor-e2e-report.html';
 	options.targetPath = options.targetPath || 'target';
-
+	options.takeScreenShotsForPassedSpecs = options.takeScreenShotsForPassedSpecs === undefined? true : options.takeScreenShotsForPassedSpecs;
+  mkdirp.sync(path.join(options.targetPath, options.screenshotsFolder));
 	self.jasmineStarted = function (summary) {};
 
 	self.suiteStarted = function (suite) {};
@@ -28,7 +28,7 @@ function HTMLScreenshotReporter(options) {
 		if(browser.browserName){
 			spec.description += '|' + browser.browserName;
 			browser.currentTest += '|' + browser.browserName;
-			if(browser.browserVersion){
+			if(browser.version){
 				spec.description +=  '-' + browser.version;
 			}
 		}
@@ -36,9 +36,11 @@ function HTMLScreenshotReporter(options) {
 	};
 
 	self.specDone = function (spec) {
-		browser.takeScreenshot().then(function (png) {
-			writeScreenShot(png, path.join(options.targetPath, options.screenshotsFolder, sanitizeFilename(spec.description)) + '.png');
-		});
+		if(options.takeScreenShotsForPassedSpecs || (spec.assertions[0] && !spec.assertions[0].passed)){
+      browser.takeScreenshot().then(function (png) {
+        writeScreenShot(png, path.join(options.targetPath, options.screenshotsFolder, sanitizeFilename(spec.description)) + '.png');
+      });
+    }
 	};
 
 	self.suiteDone = function (suite) {};
@@ -63,8 +65,8 @@ function HTMLScreenshotReporter(options) {
 	};
 
 	function generateReport(jsonstr, automationHeader, elapsedTime) {
-		var allResults = new Array();
-		var testArray = new Array();
+		var allResults = [];
+		var testArray = [];
 		var browserArrayUnique = reporter.getUniqueBrowserNames(jsonstr);
 
 		for (var q = 0; q < jsonstr.length; q++) {
@@ -103,7 +105,7 @@ function HTMLScreenshotReporter(options) {
 		var assertions = (run.assertions)? run.assertions : [];
 		var stk = [];
 		for (var i = 0; i < assertions.length; i++) {
-			if(assertions[i].passed == false){
+			if(assertions[i].passed === false){
 				if(assertions[i].errorMsg){
 					stk.push(assertions[i].errorMsg);
 				}
@@ -131,48 +133,57 @@ function HTMLScreenshotReporter(options) {
 		}
 
 		for(var f in features){
+			if(!features.hasOwnProperty(f)){
+				continue;
+			}
+			var feature = features[f];
 			result += '<table class="testlist">';
 
 			result += concatSpecTableHeader(f, browsers);
 
 			var featureDuration = {};
 
-			for(var scen in features[f]){
+			for(var scen in feature){
 
-				if (features[f].hasOwnProperty(scen)) {
-					countIndex++;
-				}
+				if (!feature.hasOwnProperty(scen)) {
+          continue;
+				} else {
+          countIndex++;
+        }
+        var scene = feature[scen];
 
 				result += '<tr><td>' + countIndex + '</td><td class="testname">' + scen + '</td>';
 
 				var exceptions = [];
-				for (var b=0; b < browsers.length; b++) {
+				for (b=0; b < browsers.length; b++) {
 					var browserName = browsers[b];
-					if(featureDuration[browserName]==undefined){
+					if(featureDuration[browserName]===undefined){
 						featureDuration[browserName] = 0;
 					}
-					for (var run in features[f][scen]) {
-						if (browserName === features[f][scen][run].name) {
-							featureDuration[browserName] += features[f][scen][run].duration;
+					for (var run in scene) {
+            if(!scene.hasOwnProperty(run)){
+              continue;
+            }
+            var r = scene[run];
+						if (browserName === r.name) {
+							featureDuration[browserName] += r.duration;
 
-							if(timeTrack[browserName][f]==undefined){
+							if(timeTrack[browserName][f]===undefined){
 								timeTrack[browserName][f] = 0;
 							}
 
-							timeTrack[browserName][f] += features[f][scen][run].duration;
+							timeTrack[browserName][f] += r.duration;
 
-							if (features[f][scen][run].status == "true") {
-								result += '<td class="pass">' + linkToScreenshot(scen, browserName) + 'PASS</a>' +
-									' <span class="miliss">'+(features[f][scen][run].duration/1000).toFixed(2)+'s.</span></td>';
-							}
-							if (features[f][scen][run].status == "false") {
+							if (r.status === "true") {
+								result += '<td class="pass">' + linkToScreenshot(scen, browserName, !options.takeScreenShotsForPassedSpecs) + 'PASS</a>' +
+									' <span class="miliss">'+(r.duration/1000).toFixed(2)+'s.</span></td>';
+							} else if (r.status === "false") {
 								result += '<td class="fail">FAIL - <a href="javascript:void(0)" onclick="showhide(\''+sanitizeFilename(scen) +'\', \'' +
 									sanitizeFilename(browserName)+'\')">stack trace</a> - ' + linkToScreenshot(scen, browserName) +
-									'screen shot</a> <span class="miliss">'+(features[f][scen][run].duration/1000).toFixed(2)+'s.</span></td>';
-								exceptions.push(concatStackTrace(runId(scen, browserName), features[f][scen][run], browsers.length + 2));
-							}
-							if (features[f][scen][run].status == "Skipped") {
-								result += '<td class="skip">Skipped (test duration '+features[f][scen][run].duration+' ms.)</td>';
+									'screen shot</a> <span class="miliss">'+(r.duration/1000).toFixed(2)+'s.</span></td>';
+								exceptions.push(concatStackTrace(runId(scen, browserName), r, browsers.length + 2));
+							} else if (r.status === "Skipped") {
+								result += '<td class="skip">Skipped (test duration '+r.duration+' ms.)</td>';
 							}
 						}
 					}
@@ -204,19 +215,29 @@ function HTMLScreenshotReporter(options) {
 		result += '<tr><th>Feature</th><th>Browser</th><th>Duration</th><th>Comparison</th></tr>';
 		var largest = 0;
 		for (var b in timeTrack) {
+			if(!timeTrack.hasOwnProperty(b)){
+				continue;
+			}
 			for(var f in timeTrack[b]){
+        if(!timeTrack[b].hasOwnProperty(f)){
+          continue;
+        }
 				if (timeTrack[b][f] > largest){
 					largest = timeTrack[b][f];
 				}
 			}
 		}
-		for (var b in timeTrack) {
-			var browserName = b;
-			for(var f in timeTrack[b]){
+		for (b in timeTrack) {
+      if(!timeTrack.hasOwnProperty(b)){
+        continue;
+      }
+			for(f in timeTrack[b]){
+        if(!timeTrack[b].hasOwnProperty(f)){
+          continue;
+        }
 				result += '<tr>';
-				var featureName = f;
-				result += '<td>'+featureName+'</td>';
-				result += '<td>'+browserName+'</td>';
+				result += '<td>'+f+'</td>';
+				result += '<td>'+b+'</td>';
 				result += '<td>'+timeTrack[b][f]+' ms.</td>';
 				var percentage = (timeTrack[b][f] / largest * 100).toFixed();
 				result += '<td><div style="width:100%;background-color: #CCCCCC"><div style="width: '+percentage +
@@ -237,9 +258,9 @@ function HTMLScreenshotReporter(options) {
 					'<table class="stacker">' +
 					'<tr><td class="error">' + reporter.encodeEntities(run.stackTrace[0]) + '</td></tr>';
 				for (var i = 1; i < run.stackTrace.length; i++) {
-					result += '<tr><td'
-					if(run.stackTrace[i].indexOf('    at ') == 0){
-						if(run.stackTrace[i].indexOf('node_modules') == -1 && run.stackTrace[i].indexOf('process._tickCallback') == -1){
+					result += '<tr><td';
+					if(run.stackTrace[i].indexOf('    at ') === 0){
+						if(run.stackTrace[i].indexOf('node_modules') === -1 && run.stackTrace[i].indexOf('process._tickCallback') === -1){
 							result += ' class="atstrong"';
 						}else {
 							result += ' class="at"';
@@ -258,7 +279,7 @@ function HTMLScreenshotReporter(options) {
 		for (var i = 0; i < sortedBrowsers.length; i++) {
 			result += '<th>' + sortedBrowsers[i] + '</th>';
 		}
-		result += '</tr>'
+		result += '</tr>';
 		return result;
 	}
 
@@ -273,8 +294,8 @@ function HTMLScreenshotReporter(options) {
 		return result;
 	}
 
-	function linkToScreenshot(scenarioName, browserName){
-		return '<a href="' + options.screenshotsFolder + '/' + runId(scenarioName, browserName) + '.png">';
+	function linkToScreenshot(scenarioName, browserName, disable){
+		return '<a ' + (disable ? 'disabled ' : '') + ' href="'+ options.screenshotsFolder + '/' + runId(scenarioName, browserName) + '.png">';
 	}
 
 	function runId(scenarioName, browserName){
@@ -477,6 +498,9 @@ function HTMLScreenshotReporter(options) {
 		result +='.miliss {';
 		result +='	color: #9B9B9B;';
 		result +='}';
+		result +='a[disabled] {';
+    result +='  pointer-events: none;';
+    result +='}';
 		result += '</style>';
 		return result;
 	}
@@ -525,7 +549,7 @@ function HTMLScreenshotReporter(options) {
 		}
 		for(var i=0; i<tempFiles.length; i++){
 			var bugPath = path.join(path.resolve(options.targetPath), tempFiles[i]);
-			var raw = fs.readFileSync(bugPath)
+			var raw = fs.readFileSync(bugPath);
 			var bug = JSON.parse(raw);
 			var key = bug.key;
 			var type = '<img src="'+bug.fields.issuetype.iconUrl+'" title="'+bug.fields.issuetype.description+'">';
